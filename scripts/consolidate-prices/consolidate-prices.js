@@ -37,7 +37,7 @@ function main() {
     const content = 'window.PRICES = ' + JSON.stringify(output, null, 4) + ';';
     console.log('content:', content);
     fs.writeFileSync(OUTPUT_FILE, content);
-    console.log(`Wrote file ${OUTPUT_FILE}.`);
+    console.log(`Done, see ${OUTPUT_FILE}.`);
 }
 
 // =====================================================================================================================

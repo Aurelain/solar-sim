@@ -4,7 +4,8 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
-        "consolidate-prices": "node scripts/consolidate-prices/consolidate-prices"
+        "consolidate-prices": "node scripts/consolidate-prices/consolidate-prices",
+        "consolidate-production": "node scripts/consolidate-production/consolidate-production"
     },
     "devDependencies": {},
     "dependencies": {},
