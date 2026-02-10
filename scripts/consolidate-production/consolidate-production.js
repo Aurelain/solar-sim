@@ -35,10 +35,11 @@ function main() {
     for (const path of paths) {
         Object.assign(output, parseCsv(path));
     }
-    const content = 'window.PRODUCTION = ' + JSON.stringify(output, null, 4) + ';';
-    // console.log('content:', content);
+    const content = 'window.PRODUCTION = ' + printHub(output) + ';';
     fs.writeFileSync(OUTPUT_FILE, content);
+
     console.log(`Done, see ${OUTPUT_FILE}.`);
+    // computeYearlyProduction(output);
 }
 
 // =====================================================================================================================
@@ -79,10 +80,11 @@ function getQuarterFromTime(time) {
 /**
  *
  */
-function computeAverages(hub) {
+function computeAverages(hub, forced) {
     for (const key in hub) {
         const values = hub[key];
-        hub[key] = Number(Number(sum(values) / values.length).toFixed(2));
+        const denominator = forced || values.length;
+        hub[key] = Number(Number(sum(values) / denominator));
     }
 }
 
@@ -91,6 +93,50 @@ function computeAverages(hub) {
  */
 function sum(list) {
     return list.reduce((partialSum, a) => partialSum + a, 0);
+}
+
+/**
+ *
+ */
+function printHub(hub) {
+    const lines = ['{'];
+    for (const key in hub) {
+        lines.push(`\t'${key}': ${hub[key].toFixed(2)},`);
+    }
+    lines.push('}');
+    return lines.join('\n');
+}
+
+// noinspection JSUnusedLocalSymbols
+/**
+ *
+ */
+function computeYearlyProduction(hub) {
+    const byHour = {};
+    for (const key in hub) {
+        const hourlyKey = key.replace(/:\d+/, '');
+        byHour[hourlyKey] = byHour[hourlyKey] || [];
+        byHour[hourlyKey].push(hub[key]);
+    }
+    computeAverages(byHour, 4);
+
+    const byDay = {};
+    const byMonth = {};
+    for (const key in byHour) {
+        const value = byHour[key];
+
+        const dayKey = key.substring(0,10);
+        byDay[dayKey] = byHour[dayKey] || 0;
+        byDay[dayKey] += value;
+
+        const monthKey = key.substring(0, 7);
+        byMonth[monthKey] = byMonth[monthKey] || 0;
+        byMonth[monthKey] += value;
+    }
+
+    const total = sum(Object.values(byMonth));
+    console.log('byMonth:', printHub(byMonth));
+    console.log('Total production:', Number(total / 1000).toFixed(3) + ' kWh');
 }
 
 // =====================================================================================================================
