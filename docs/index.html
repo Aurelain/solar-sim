@@ -1,17 +1,116 @@
 <!DOCTYPE html>
+<!--suppress HtmlFormInputWithoutLabel -->
 <html lang='en'>
     <head>
         <meta charset='UTF-8'>
         <meta name='viewport' content='width=device-width, initial-scale=1.0'>
         <link rel='icon' type='image/svg+xml' href="data:image/svg+xml,
-            <svg xmlns='http://www.w3.org/2000/svg'><text y='24' font-size='24'>💼</text></svg>">
+            <svg xmlns='http://www.w3.org/2000/svg'><text y='24' font-size='24'>☀️</text></svg>">
         <title>solar-arbitrage</title>
         <style>
             html, body {
-                margin: 0;
+                line-height: 1.5;
+            }
+
+            * {
+                font-family: "JetBrains Mono", monospace;
+                font-size: 10pt;
+            }
+
+            input {
+                width: 40px;
+            }
+
+            input[type="checkbox"] {
+                width:auto;
+                margin: 0 0 0 -4px;
+                position:relative;
+                top: 2px;
+            }
+
+            li {
+                margin-bottom: 2px;
+            }
+
+            .special {
+                color: magenta;
             }
         </style>
+        <script src='PRICES.js'></script>
+        <script src='PRODUCTION.js'></script>
+        <script src='compute.js'></script>
+        <script src='main.js'></script>
     </head>
     <body>
+        <h1>Input:</h1>
+        <ul>
+            <li>Producția de kWh, la o anumită locație, la fiecare 15 minute:
+                <span class='special'>[tot istoricul din 2025]</span>
+            </li>
+            <li>Capacitate de producție <b>panouri</b>:
+                <input type='text' value='100'/> kW
+            </li>
+            <li>Capacitate de stocare <b>baterie</b>: <input type='text' value='215'/> kWh</li>
+            <li>Limita minimă de descărcare a bateriei: <input type='text' value='20'/> %</li>
+            <li>Eficiența traseului panou-baterie-rețea: <input type='text' value='85'/> %</li>
+            <li>Uzura bateriei per ciclu:
+                <input type='text' value='20'/> RON/kWh/ciclu
+            </li>
+            <li>Prețuri:
+                <select>
+                    <option value="dinamice">dinamice</option>
+                    <option value="statice">statice</option>
+                </select>
+                <ul>
+                    <li>Preț (venit) introducere în rețea: <input type='text' value='0.28'/> RON/kWh</li>
+                </ul>
+                <ul>
+                    <li>Prețul unui kWh în PZU, la fiecare 15 minute:
+                        <span class='special'>[tot istoricul din 2025]</span>
+                    </li>
+                    <li>Preț (venit) minim introducere în rețea: <input type='text' value='0.50'/> RON/kWh</li>
+                    <li>Preț (cost) maxim extragere din rețea: <input type='text' value='0.55'/> RON/kWh</li>
+                    <li>Tarif DEER la extragerea din rețea: <input type='text' value='0.55'/> RON/kWh</li>
+                    <li>Comision furnizor: <input type='text' value='25'/> %</li>
+                </ul>
+            </li>
+            <li>Costuri de întreținere a panourilor: <input type='text' value='20'/> RON/kW/lună</li>
+            <li>Asigurarea investiției: <input type='text' value='20'/> RON/(kW+kWh)/an</li>
+            <li>Costuri administrative: <input type='text' value='20'/> RON/lună</li>
+            <li>
+                Curs EUR:
+                <input type='text' value='5.1'/> RON
+            </li>
+        </ul>
+        <h1>Output:</h1>
+        <ul>
+            <li>
+                Cicluri de baterie: <span class='result' id='cycles'>100</span> cicluri
+            </li>
+            <li>
+                Venituri din soare direct: <span class='result' id='i-direct'>100</span> EUR
+            </li>
+            <li>
+                Venituri din soare stocat: <span class='result' id='i-stored'>100</span> EUR
+            </li>
+            <li>
+                Venituri din arbitraj non-solar: <span class='result' id='i-arbitrage'>100</span> EUR
+            </li>
+            <li>
+                Cheltuieli din arbitraj non-solar: <span class='result' id='e-arbitrage'>100</span> EUR
+            </li>
+            <li>
+                Cheltuieli cu uzura bateriei: <span class='result' id='e-battery'>100</span> EUR
+            </li>
+            <li>
+                Cheltuieli cu comisionul: <span class='result' id='e-fee'>100</span> EUR
+            </li>
+            <li>
+                Cheltuieli cu administrarea: <span class='result' id='e-admin'>100</span> EUR
+            </li>
+            <li>
+                <b>Profit net (EBITDA): <span class='result' id='ebitda'>100</span> EUR</b>
+            </li>
+        </ul>
     </body>
 </html>
