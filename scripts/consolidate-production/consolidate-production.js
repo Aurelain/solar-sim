@@ -6,7 +6,7 @@ import projectRoot from '../utils/projectRoot.js';
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 const CSV_DIR = projectRoot + '/scripts/consolidate-production/input';
-const OUTPUT_FILE = projectRoot + '/docs/PRODUCTION.js';
+const OUTPUT_FILE = projectRoot + '/docs/artifacts/PRODUCTION.js';
 const SNAP_MINUTES = {
     '05': '15',
     '10': '15',

@@ -7,7 +7,7 @@ import assume from '../utils/assume.js';
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 const CSV_DIR = projectRoot + '/scripts/consolidate-prices/input';
-const OUTPUT_FILE = projectRoot + '/docs/PRICES.js';
+const OUTPUT_FILE = projectRoot + '/docs/artifacts/PRICES.js';
 
 /*
 {
