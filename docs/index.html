@@ -79,13 +79,24 @@
     <body>
         <h1>Configurație:</h1>
         <ul>
-            <li>Istoric producție la locația respectivă: ~<span id='production'>100</span> kWh/kW/an <span
-                    class='magenta'>[în 2025, granular la 15 minute]</span></li>
-            <li><b>Capacitate de producție panouri</b>: <input id='panels' class='special' type='text' value='200'/> kW</li>
-            <li>Cost panou instalat (inclusiv montaj): <input id='panels-cost-per-kw' type='text' value='1800'/> RON/kW</li>
-            <li><b>Capacitate de stocare baterie</b>: <input id='battery' class='special' type='text' value='100'/> kWh (minim legal: 50% din panouri)</li>
+            <li>
+                Istoric producție la locația respectivă:
+                ~<span id='production'>100</span> kWh/kW/an
+                <span class='magenta'>[în 2025, granular la 15 minute]</span>
+            </li>
+            <li>
+                <b>Capacitate de producție panouri</b>:
+                <input id='panels' class='special' type='text' value='200'/> kW
+            </li>
+            <li>Cost panou fotovoltaic: <input id='panels-cost-per-kw-glass' type='text' value='600'/> RON/kW</li>
+            <li>Cost montaj panouri: <input id='panels-cost-per-kw-setup' type='text' value='1200'/> RON/kW</li>
+            <li>Durată de viață panou: <input id='panels-duration' type='text' value='20'/> ani</li>
+            <li>
+                <b>Capacitate de stocare baterie</b>:
+                <input id='battery' class='special' type='text' value='100'/> kWh (minim legal: 50% din panouri)
+            </li>
             <li>Cost baterie: <input id='battery-cost-per-kwh' type='text' value='1000'/> RON/kWh</li>
-            <li>Cicluri baterie: <input id='battery-cycles' type='text' value='6000'/> cicluri</li>
+            <li>Durată de viață baterie: <input id='battery-cycles' type='text' value='6000'/> cicluri</li>
             <li>Limita minimă de descărcare a bateriei: <input id='minimum-battery' type='text' value='20'/> %</li>
             <li>Eficiența traseului panou-baterie-rețea: <input id='storage-efficiency' type='text' value='85'/> %</li>
             <li>Politica de preț:
@@ -131,11 +142,12 @@
                 </ul>
             </li>
             <li>
-                <b>Profit net anual (EBITDA): <span class='result' id='ebitda'></span> EUR/an</b>
+                <b>Profit net anual (EBIT): <span class='result' id='ebitda'></span> EUR/an</b>
                 <ul>
                     <li>Venituri din soare direct: <span class='result' id='i-direct'></span> EUR/an</li>
                     <li>Venituri din soare înmagazinat: <span class='result' id='i-stored'></span> EUR/an</li>
                     <li>Cheltuieli cu uzura bateriei: <span class='result' id='o-battery'></span> EUR/an</li>
+                    <li>Cheltuieli cu uzura panourilor: <span class='result' id='o-panels'></span> EUR/an</li>
                     <li>Cheltuieli cu administrarea: <span class='result' id='o-admin'></span> EUR/an</li>
                 </ul>
             </li>

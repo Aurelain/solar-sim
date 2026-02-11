@@ -1,2 +1,2 @@
-# solar-arbitrage
-Simulation for 2025
+# solar-sim
+Simulation for 2025.

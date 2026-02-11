@@ -23,6 +23,9 @@ window.compute = (config) => {
     const adminPerYear = cleaningPerYear + insurancePerYear + accountingPerYear;
     const adminPerQuarterHour = adminPerYear/365/24/4;
 
+    const panelsCostPerYear = config.panels * config.panelsCostPerKwGlass/config.panelsDuration;
+    const panelsPerQuarterHour = panelsCostPerYear/365/24/4;
+
     const collector = {
         battery: config.battery * 0.2,
         batteryPercent: 20,
@@ -34,6 +37,7 @@ window.compute = (config) => {
         batteryToGrid: 0,
         batteryToGridIncome: 0,
         sunToTank: 0,
+        panelsOut: 0,
         adminOut: 0,
     };
     const progress = [];
@@ -44,6 +48,7 @@ window.compute = (config) => {
         const action = decideAction(hour, spotPzu, spotProduction, collector, config);
         implementAction(action, spotPzu, spotProduction, collector, config, key);
         collector.adminOut += adminPerQuarterHour;
+        collector.panelsOut += panelsPerQuarterHour;
         progress.push({
             interval: key,
             spotPzu: spotPzu.toFixed(3),

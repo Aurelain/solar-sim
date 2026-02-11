@@ -12,12 +12,13 @@ const DETAILS = {
     batteryPercent: 'Bat. (%)',
     batteryTraffic: 'Trafic bat. (kWh)',
     batteryCycles: 'Cicluri',
-    batteryOut: 'Uzură (RON)',
+    batteryOut: 'Uzură bat. (RON)',
     sunToGrid: 'Direct (kWh)',
     sunToGridIncome: 'Direct (RON)',
     batteryToGrid: 'Stocat (kWh)',
     batteryToGridIncome: 'Stocat (RON)',
     sunToTank: 'Risipit (kWh)',
+    panelsOut: 'Uzură panouri (RON)',
     adminOut: 'Costuri admin',
 }
 let detailsLimit = 0;
@@ -105,7 +106,9 @@ function collectConfig() {
     return {
         production: window.PRODUCTION,
         panels: read('panels'),
-        panelsCostPerKw: read('panels-cost-per-kw'),
+        panelsCostPerKwGlass: read('panels-cost-per-kw-glass'),
+        panelsCostPerKwSetup: read('panels-cost-per-kw-setup'),
+        panelsDuration: read('panels-duration'),
         battery,
         batteryCostPerKwh,
         batteryCycles,
@@ -134,7 +137,7 @@ function collectConfig() {
 function updateResults(progress, config) {
     const {eur} = config;
 
-    const capexPanels = config.panelsCostPerKw * config.panels;
+    const capexPanels = (config.panelsCostPerKwGlass+config.panelsCostPerKwSetup) * config.panels;
     const capexBattery = config.batteryCostPerKwh * config.battery;
     const capex = capexPanels + capexBattery + config.capexConnection0 + config.capexOthers0;
     write('capex', Math.round(capex / eur));
@@ -145,11 +148,12 @@ function updateResults(progress, config) {
 
     const last = progress.at(-1);
     const income = last.sunToGridIncome + last.batteryToGridIncome;
-    const expenses = last.batteryOut + last.adminOut;
+    const expenses = last.batteryOut + last.panelsOut + last.adminOut;
     write('ebitda', Math.round((income-expenses)/ eur));
     write('i-direct', Math.round(last.sunToGridIncome / eur));
     write('i-stored', Math.round(last.batteryToGridIncome / eur));
     write('o-battery', Math.round(last.batteryOut / eur));
+    write('o-panels', Math.round(last.panelsOut / eur));
     write('o-admin', Math.round(last.adminOut / eur));
 
 }
