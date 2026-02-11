@@ -11,6 +11,7 @@ const SUN_TO_GRID = 'SUN_TO_GRID';
 const SUN_TO_TANK = 'SUN_TO_TANK';
 const BATTERY_TO_GRID = 'BATTERY_TO_GRID';
 const NOTHING = 'NOTHING';
+const CRITICAL_HOUR = 19;
 
 /**
  *
@@ -77,7 +78,7 @@ function decideAction(hour, spotPzu, spotProduction, collector, config) {
         // The sun is down
         if (collector.batteryPercent > config.minimumBattery) {
             // We have some charge pending
-            if (hour >= 19 && spotPzu > 0) {
+            if (hour >= CRITICAL_HOUR && spotPzu > 0) {
                 // Fertile interval
                 return BATTERY_TO_GRID;
             } else {
@@ -154,7 +155,7 @@ function updateBatteryTraffic(added, collector, config) {
     collector.batteryTraffic += added;
     const cycleSize = (config.battery - config.battery * config.minimumBattery/100)*2;
     collector.batteryCycles = Math.floor(collector.batteryTraffic / cycleSize);
-    collector.batteryOut = config.batteryDepreciation * config.battery * collector.batteryCycles;
+    collector.batteryOut = config.batteryDepreciationPerCycle * collector.batteryCycles;
 }
 
 /**

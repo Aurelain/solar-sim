@@ -5,22 +5,23 @@ const HISTORIC_CAPACITY = 3520; // 8 * 440W
 const PRODUCTION_MANUAL_BOOST = 1.02; // 2% better when the panels are cleaned
 const DETAILS = {
     interval: 'Moment',
-    spotPzu: 'PZU',
-    panels: 'Panels',
-    action: 'Action',
-    battery: 'B',
-    batteryPercent: 'B%',
-    batteryTraffic: 'Bt',
-    batteryCycles: 'Bc',
-    batteryOut: 'Bo',
-    sunToGrid: 'sg',
-    sunToGridIncome: 'sgi',
-    batteryToGrid: 'bg',
-    batteryToGridIncome: 'bgi',
-    sunToTank: 'st',
-    adminOut: 'ao',
+    spotPzu: 'PZU (RON/kWh)',
+    panels: 'Production (kW)',
+    action: 'Acțiune',
+    battery: 'Bat. (kWh)',
+    batteryPercent: 'Bat. (%)',
+    batteryTraffic: 'Trafic bat. (kWh)',
+    batteryCycles: 'Cicluri',
+    batteryOut: 'Uzură (RON)',
+    sunToGrid: 'Direct (kWh)',
+    sunToGridIncome: 'Direct (RON)',
+    batteryToGrid: 'Stocat (kWh)',
+    batteryToGridIncome: 'Stocat (RON)',
+    sunToTank: 'Risipit (kWh)',
+    adminOut: 'Costuri admin',
 }
-let detailsLimit = 200;
+let detailsLimit = 0;
+// let detailsLimit = 200;
 
 // =====================================================================================================================
 //  P U B L I C
@@ -31,6 +32,10 @@ let detailsLimit = 200;
 window.onload = () => {
     write('production', computeAverageProduction(window.PRODUCTION));
     write('pzu', computeAveragePzu(window.PRICES));
+    document.getElementById('more').onclick = (event) => {
+        detailsLimit += event.ctrlKey? Number.MAX_SAFE_INTEGER : 100;
+        run();
+    }
     Array.from(document.querySelectorAll('select,input')).forEach((el) => el.addEventListener('change', run));
     run();
 };
@@ -78,7 +83,9 @@ function run() {
     const config = collectConfig();
     const progress = compute(config);
     updateResults(progress, config);
-    updateDetails(progress);
+    if (detailsLimit) {
+        updateDetails(progress);
+    }
 }
 
 /**
@@ -88,13 +95,23 @@ function collectConfig() {
     const isDynamic = read('policy');
     hide('policy-static', isDynamic);
     hide('policy-dynamic', !isDynamic);
+
+    const battery = read('battery');
+    const batteryCostPerKwh = read('battery-cost-per-kwh');
+    const batteryCycles = read('battery-cycles');
+    const batteryCost = batteryCostPerKwh * battery;
+    const batteryDepreciationPerCycle = batteryCost/batteryCycles;
+
     return {
         production: window.PRODUCTION,
         panels: read('panels'),
-        battery: read('battery'),
+        panelsCostPerKw: read('panels-cost-per-kw'),
+        battery,
+        batteryCostPerKwh,
+        batteryCycles,
         minimumBattery: read('minimum-battery'),
         storageEfficiency: read('storage-efficiency'),
-        batteryDepreciation: read('battery-depreciation'),
+        batteryDepreciationPerCycle, // computed
         isDynamic,
         staticPrice: read('static-price'),
         pzu: window.PRICES,
@@ -106,22 +123,35 @@ function collectConfig() {
         insurance: read('insurance'),
         accounting: read('accounting'),
         eur: read('eur'),
+        capexConnection0: read('capex-connection0'),
+        capexOthers0: read('capex-others0'),
     };
 }
 
 /**
  *
  */
-function updateResults(progress, {eur}) {
+function updateResults(progress, config) {
+    const {eur} = config;
+
+    const capexPanels = config.panelsCostPerKw * config.panels;
+    const capexBattery = config.batteryCostPerKwh * config.battery;
+    const capex = capexPanels + capexBattery + config.capexConnection0 + config.capexOthers0;
+    write('capex', Math.round(capex / eur));
+    write('capex-panels', Math.round(capexPanels / eur));
+    write('capex-battery', Math.round(capexBattery / eur));
+    write('capex-connection1', Math.round(config.capexConnection0 / eur));
+    write('capex-others1', Math.round(config.capexOthers0 / eur));
+
     const last = progress.at(-1);
-    write('cycles', last.batteryCycles);
+    const income = last.sunToGridIncome + last.batteryToGridIncome;
+    const expenses = last.batteryOut + last.adminOut;
+    write('ebitda', Math.round((income-expenses)/ eur));
     write('i-direct', Math.round(last.sunToGridIncome / eur));
     write('i-stored', Math.round(last.batteryToGridIncome / eur));
     write('o-battery', Math.round(last.batteryOut / eur));
     write('o-admin', Math.round(last.adminOut / eur));
-    const income = last.sunToGridIncome + last.batteryToGridIncome;
-    const expenses = last.batteryOut + last.adminOut;
-    write('ebitda', Math.round((income-expenses)/ eur));
+
 }
 
 /**
