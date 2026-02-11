@@ -54,12 +54,12 @@
     <body>
         <h1>Configurație:</h1>
         <ul>
-            <li>Istoric producție la o anumită locație: ~<span id='production'>100</span> kWh/kW/an <span class='special'>[în 2025, granular la 15 minute]</span></li>
+            <li>Istoric producție la locația respectivă: ~<span id='production'>100</span> kWh/kW/an <span class='special'>[în 2025, granular la 15 minute]</span></li>
             <li><b>Capacitate de producție panouri</b>: <input id='panels' type='text' value='100'/> kW</li>
             <li><b>Capacitate de stocare baterie</b>: <input id='battery' type='text' value='215'/> kWh</li>
             <li>Limita minimă de descărcare a bateriei: <input id='minimum-battery' type='text' value='20'/> %</li>
             <li>Eficiența traseului panou-baterie-rețea: <input id='storage-efficiency' type='text' value='85'/> %</li>
-            <li>Uzura bateriei per ciclu: <input id='battery-depreciation' type='text' value='20'/> RON/kWh/ciclu</li>
+            <li>Uzura bateriei: <input id='battery-depreciation' type='text' value='0.17'/> RON/kWh/ciclu</li>
             <li>Politica de preț:
                 <select id='policy'>
                     <option value="1">dinamic</option>
@@ -69,28 +69,24 @@
                 <ul id='policy-dynamic'>
                     <li>Istoric preț în PZU: ~<span id='pzu'>100</span> RON/kWh <span class='special'>[în 2025, granular la 15 minute]</span></li>
                     <li>Preț (venit) minim introducere în rețea: <input id='minimum-feed-price' type='text' value='0.50'/> RON/kWh</li>
-                    <li>Preț (cost) maxim extragere din rețea: <input id='maximum-extraction-price' type='text' value='0.55'/> RON/kWh</li>
-                    <li>Tarif DEER la extragerea din rețea: <input id='deer' type='text' value='0.55'/> RON/kWh</li>
+                    <li class='hidden'>Preț (cost) maxim extragere din rețea: <input id='maximum-extraction-price' type='text' value='0.55'/> RON/kWh</li>
+                    <li class='hidden'>Tarif DEER la extragerea din rețea: <input id='deer' type='text' value='0.55'/> RON/kWh</li>
                     <li>Comision furnizor: <input id='commission' type='text' value='25'/> %</li>
                 </ul>
             </li>
-            <li>Costuri de întreținere a panourilor: <input id='cleaning' type='text' value='20'/> RON/kW/lună</li>
-            <li>Asigurarea investiției: <input id='insurance' type='text' value='20'/> RON/(kW+kWh)/an</li>
-            <li>Costuri administrative: <input id='admin' type='text' value='20'/> RON/lună</li>
+            <li>Costuri de întreținere a panourilor: <input id='cleaning' type='text' value='3'/> RON/kW/lună</li>
+            <li>Asigurarea investiției: <input id='insurance' type='text' value='15'/> RON/(kW+kWh)/an</li>
+            <li>Costuri contabile: <input id='accounting' type='text' value='300'/> RON/lună</li>
             <li>Curs EUR: <input id='eur' type='text' value='5.1'/> RON</li>
         </ul>
         <h1>Rezultat:</h1>
         <ul>
             <li>Cicluri de baterie: <span class='result' id='cycles'>100</span> cicluri</li>
             <li>Venituri din soare direct: <span class='result' id='i-direct'>100</span> EUR/an</li>
-            <li>Venituri din soare stocat: <span class='result' id='i-stored'>100</span> EUR/an</li>
-            <li>Venituri din arbitraj non-solar: <span class='result' id='i-arbitrage'>100</span> EUR/an</li>
-            <li>Cheltuieli din arbitraj non-solar: <span class='result' id='o-arbitrage'>100</span> EUR/an</li>
+            <li>Venituri din soare înmagazinat: <span class='result' id='i-stored'>100</span> EUR/an</li>
             <li>Cheltuieli cu uzura bateriei: <span class='result' id='o-battery'>100</span> EUR/an</li>
-            <li>Cheltuieli cu întreținerea: <span class='result' id='o-cleaning'>100</span> EUR/an</li>
-            <li>Cheltuieli cu asigurarea: <span class='result' id='o-insurance'>100</span> EUR/an</li>
             <li>Cheltuieli cu administrarea: <span class='result' id='o-admin'>100</span> EUR/an</li>
-            <li><b>Profit net (EBITDA): <span class='result' id='ebitda'>100</span> EUR</b></li>
+            <li><b>Profit net (EBITDA): <span class='result' id='ebitda'>100</span> EUR/an</b></li>
         </ul>
         <h1>Detalii:</h1>
         <div id='dump'></div>

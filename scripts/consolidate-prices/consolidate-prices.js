@@ -92,6 +92,9 @@ function parseCsv(path) {
     }
     for (const line of lines) {
         const [, interval, price] = line;
+        if (!INTERVAL_TO_TIME[interval]) {
+            continue;
+        }
         const key = date + ', ' + INTERVAL_TO_TIME[interval];
         output[key] = Number(price);
     }

@@ -6,11 +6,21 @@ const PRODUCTION_MANUAL_BOOST = 1.02; // 2% better when the panels are cleaned
 const DETAILS = {
     interval: 'Moment',
     spotPzu: 'PZU',
-    spotProduction: 'Panels',
+    panels: 'Panels',
     action: 'Action',
     battery: 'B',
     batteryPercent: 'B%',
+    batteryTraffic: 'Bt',
+    batteryCycles: 'Bc',
+    batteryOut: 'Bo',
+    sunToGrid: 'sg',
+    sunToGridIncome: 'sgi',
+    batteryToGrid: 'bg',
+    batteryToGridIncome: 'bgi',
+    sunToTank: 'st',
+    adminOut: 'ao',
 }
+let detailsLimit = 200;
 
 // =====================================================================================================================
 //  P U B L I C
@@ -58,7 +68,7 @@ function computeAveragePzu(hub) {
     const values = Object.values(byHour);
     const total = sum(values);
     const count = values.length;
-    return Math.round(total / count);
+    return (total / count / 1000).toFixed(3);
 }
 
 /**
@@ -67,7 +77,7 @@ function computeAveragePzu(hub) {
 function run() {
     const config = collectConfig();
     const progress = compute(config);
-    updateResults(progress);
+    updateResults(progress, config);
     updateDetails(progress);
 }
 
@@ -94,7 +104,7 @@ function collectConfig() {
         commission: read('commission'),
         cleaning: read('cleaning'),
         insurance: read('insurance'),
-        admin: read('admin'),
+        accounting: read('accounting'),
         eur: read('eur'),
     };
 }
@@ -102,8 +112,16 @@ function collectConfig() {
 /**
  *
  */
-function updateResults(progress) {
-
+function updateResults(progress, {eur}) {
+    const last = progress.at(-1);
+    write('cycles', last.batteryCycles);
+    write('i-direct', Math.round(last.sunToGridIncome / eur));
+    write('i-stored', Math.round(last.batteryToGridIncome / eur));
+    write('o-battery', Math.round(last.batteryOut / eur));
+    write('o-admin', Math.round(last.adminOut / eur));
+    const income = last.sunToGridIncome + last.batteryToGridIncome;
+    const expenses = last.batteryOut + last.adminOut;
+    write('ebitda', Math.round((income-expenses)/ eur));
 }
 
 /**
@@ -117,10 +135,21 @@ function updateDetails(progress) {
         lines.push(`<th>${DETAILS[key]}</th>`);
     }
     lines.push('</tr>');
+    let step = 0;
     for (const entry of progress) {
+        if (step++ >= detailsLimit) {
+            lines.push('<tr>');
+            lines.push('<td>...</td>');
+            lines.push('<tr>');
+            break;
+        }
         lines.push('<tr>');
         for (const key in DETAILS) {
-            lines.push(`<td>${entry[key]}</td>`);
+            let value = entry[key];
+            if (typeof value === 'number' && value.toString().includes('.')) {
+                value = value.toFixed(2);
+            }
+            lines.push(`<td>${value}</td>`);
         }
         lines.push('</tr>');
     }
