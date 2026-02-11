@@ -59,7 +59,7 @@ function parseCsv(path) {
             continue;
         }
         const quarteredTime = getQuarterFromTime(time);
-        const key = `${year}-${month}-${day}_${quarteredTime}`;
+        const key = `${year}-${month}-${day}, ${quarteredTime}`;
         output[key] = output[key] || [];
         output[key].push(nr);
     }
@@ -101,7 +101,7 @@ function sum(list) {
 function printHub(hub) {
     const lines = ['{'];
     for (const key in hub) {
-        lines.push(`\t'${key}': ${hub[key].toFixed(2)},`);
+        lines.push(`\t'${key}': ${Math.round(hub[key])},`);
     }
     lines.push('}');
     return lines.join('\n');
@@ -125,7 +125,7 @@ function computeYearlyProduction(hub) {
     for (const key in byHour) {
         const value = byHour[key];
 
-        const dayKey = key.substring(0,10);
+        const dayKey = key.substring(0, 10);
         byDay[dayKey] = byHour[dayKey] || 0;
         byDay[dayKey] += value;
 

@@ -3,7 +3,18 @@
 // =====================================================================================================================
 const HISTORIC_CAPACITY = 3520; // 8 * 440W
 const PRODUCTION_MANUAL_BOOST = 1.02; // 2% better when the panels are cleaned
+const DETAILS = {
+    interval: 'Moment',
+    spotPzu: 'PZU',
+    spotProduction: 'Panels',
+    action: 'Action',
+    battery: 'B',
+    batteryPercent: 'B%',
+}
 
+// =====================================================================================================================
+//  P U B L I C
+// =====================================================================================================================
 /**
  *
  */
@@ -14,6 +25,9 @@ window.onload = () => {
     run();
 };
 
+// =====================================================================================================================
+//  P R I V A T E
+// =====================================================================================================================
 /**
  *
  */
@@ -52,7 +66,9 @@ function computeAveragePzu(hub) {
  */
 function run() {
     const config = collectConfig();
-    console.log('config:', config);
+    const progress = compute(config);
+    updateResults(progress);
+    updateDetails(progress);
 }
 
 /**
@@ -83,6 +99,38 @@ function collectConfig() {
     };
 }
 
+/**
+ *
+ */
+function updateResults(progress) {
+
+}
+
+/**
+ *
+ */
+function updateDetails(progress) {
+    const lines = [];
+    lines.push('<table>');
+    lines.push('<tr>');
+    for (const key in DETAILS) {
+        lines.push(`<th>${DETAILS[key]}</th>`);
+    }
+    lines.push('</tr>');
+    for (const entry of progress) {
+        lines.push('<tr>');
+        for (const key in DETAILS) {
+            lines.push(`<td>${entry[key]}</td>`);
+        }
+        lines.push('</tr>');
+    }
+    lines.push('</table>');
+    write('dump', lines.join(''));
+}
+
+// =====================================================================================================================
+//  U T I L S
+// =====================================================================================================================
 /**
  *
  */
