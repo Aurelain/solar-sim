@@ -1,0 +1,63 @@
+html,body{
+	margin:0;
+}
+div {
+	width:100px;
+	height:100px;
+	line-height:100px;
+	background:white;
+	position:absolute;
+	border:5px black solid;
+	cursor:pointer;
+	font-size:94px;
+	text-align:center;
+	user-select:none;
+}
+div:hover {
+	background:yellow;
+}
+div:active {
+	background:orange;
+}
+#t1{
+	top:100px;
+	left:100px;
+}
+#t2{
+	top:100px;
+	left:200px;
+}
+#t3{
+	top:100px;
+	left:300px;
+}
+#t4{
+	top:200px;
+	left:100px;
+}
+#t5{
+	top:200px;
+	left:200px;
+}
+#t6{
+	top:200px;
+	left:300px;
+}
+#t7{
+	top:300px;
+	left:100px;
+}
+#t8{
+	top:300px;
+	left:200px;
+}
+#t9{
+	top:300px;
+	left:300px;
+}
+.disabled{
+	pointer-events:none;
+}
+.victory{
+	background:lime;
+}
